@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">🎉 Booking Confirmed!</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-success">
+                        <h5>Thank you for your booking, {{ booking.full_name }}!</h5>
+                        <p>Your booking ID is: <strong>{{ booking.booking_id }}</strong></p>
+                    </div>
+
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5>Package Details</h5>
+                                    <p>
+                                        <strong>{{ booking.tour_package.name }}</strong><br>
+                                        {{ booking.tour_package.duration_days }} Days / 
+                                        {{ booking.tour_package.duration_nights }} Nights<br>
+                                        Start Date: {{ booking.travel_start_date|date:"d M Y" }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5>Payment Summary</h5>
+                                    <p>
+                                        <strong>Total Amount:</strong> ₹{{ booking.total_amount|floatformat:2 }}<br>
+                                        <strong>Advance Paid:</strong> ₹{{ booking.advance_amount|floatformat:2 }}<br>
+                                        <strong>Balance Due:</strong> ₹{{ booking.remaining_amount|floatformat:2 }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5>What's Next?</h5>
+                        </div>
+                        <div class="card-body">
+                            <ol>
+                                <li>You'll receive a confirmation email with your booking details</li>
+                                <li>Our travel coordinator will contact you within 24 hours</li>
+                                <li>Complete your payment as per the payment schedule</li>
+                                <li>Get ready for an amazing travel experience!</li>
+                            </ol>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'tours:booking_detail' booking.booking_id %}" class="btn btn-primary btn-lg">
+                            View Booking Details
+                        </a>
+                        <a href="{% url 'tours:packages_list' %}" class="btn btn-outline-secondary">
+                            Browse More Packages
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    Need help? Call us at +91 9876543210 or email support@travelcompany.com
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h4>Booking Details: {{ booking.booking_id }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Package Information</h5>
+                            <p>
+                                <strong>{{ booking.tour_package.name }}</strong><br>
+                                {{ booking.tour_package.duration_days }} Days / 
+                                {{ booking.tour_package.duration_nights }} Nights<br>
+                                Type: {{ booking.tour_package.get_package_type_display }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Travel Details</h5>
+                            <p>
+                                <strong>Start Date:</strong> {{ booking.travel_start_date|date:"d M Y" }}<br>
+                                <strong>Booking Date:</strong> {{ booking.booking_date|date:"d M Y H:i" }}<br>
+                                <strong>Status:</strong> 
+                                <span class="badge 
+                                    {% if booking.booking_status == 'Confirmed' %}bg-success
+                                    {% elif booking.booking_status == 'Cancelled' %}bg-danger
+                                    {% elif booking.booking_status == 'Completed' %}bg-secondary
+                                    {% else %}bg-warning{% endif %}">
+                                    {{ booking.booking_status }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h5>Travelers</h5>
+                            <p>
+                                {{ booking.adults }} Adult{% if booking.adults > 1 %}s{% endif %}<br>
+                                {% if booking.kids_5_12 > 0 %}
+                                {{ booking.kids_5_12 }} Child{% if booking.kids_5_12 > 1 %}ren{% endif %} (5-12 yrs)<br>
+                                {% endif %}
+                                {% if booking.kids_b_5 > 0 %}
+                                {{ booking.kids_b_5 }} Infant{% if booking.kids_b_5 > 1 %}s{% endif %} (below 5)
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Customer Information</h5>
+                            <p>
+                                <strong>{{ booking.full_name }}</strong><br>
+                                {{ booking.email }}<br>
+                                {{ booking.phone }}<br>
+                                {% if booking.address %}{{ booking.address }}{% endif %}
+                            </p>
+                        </div>
+                    </div>
+
+                    {% if booking.special_requests or booking.dietary_requirements %}
+                    <div class="mb-3">
+                        <h5>Special Requirements</h5>
+                        {% if booking.special_requests %}
+                        <p><strong>Requests:</strong> {{ booking.special_requests }}</p>
+                        {% endif %}
+                        {% if booking.dietary_requirements %}
+                        <p><strong>Dietary:</strong> {{ booking.dietary_requirements }}</p>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <h5>Payment Summary</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p>
+                                        <strong>Total Amount:</strong> ₹{{ booking.total_amount|floatformat:2 }}<br>
+                                        <strong>Advance Paid:</strong> ₹{{ booking.advance_amount|floatformat:2 }}<br>
+                                        <strong>Balance Due:</strong> ₹{{ booking.remaining_amount|floatformat:2 }}
+                                    </p>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="alert alert-info">
+                                        <small>
+                                            Payment instructions will be sent to your email.
+                                            Please complete payment before travel date.
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5>Package Itinerary</h5>
+                </div>
+                <div class="card-body">
+                    <div class="itinerary-scroll" style="max-height: 400px; overflow-y: auto;">
+                        {% for day in itinerary %}
+                        <div class="mb-3">
+                            <h6>Day {{ day.day_number }}: {{ day.day_title }}</h6>
+                            <p class="small">{{ day.description|truncatewords:20 }}</p>
+                            {% if day.meals_included %}
+                            <p class="small text-muted">Meals: {{ day.meals_included }}</p>
+                            {% endif %}
+                            <hr>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <a href="{% url 'tours:package_detail' booking.tour_package.id %}" class="btn btn-sm btn-outline-primary mt-2">
+                        View Full Itinerary
+                    </a>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5>Need Help?</h5>
+                </div>
+                <div class="card-body">
+                    <p>Contact our customer support:</p>
+                    <ul class="list-unstyled">
+                        <li><i class="bi bi-telephone"></i> +91 9876543210</li>
+                        <li><i class="bi bi-envelope"></i> support@travelcompany.com</li>
+                    </ul>
+                    {% if booking.booking_status != 'Cancelled' %}
+                    <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                        Cancel Booking
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Booking Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">Cancel Booking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel this booking?</p>
+                <p>Cancellation charges may apply as per our policy.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <form method="POST" action="#">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Confirm Cancellation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

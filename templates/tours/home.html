@@ -1,0 +1,186 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_filters %}
+ {% block css %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <!-- In base.html -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <style>
+      body{
+        background: #78cce84a;
+      }
+      .fade-gallery img.fade-img {
+  width: 250px;
+  height: 200px;
+  object-fit: cover;
+  opacity: 0.8;
+  transition: opacity 1s ease-in-out;
+  border-radius: 10px;
+}
+
+.fade-gallery img.fade-img:hover {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+    </style>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+   <div id="bannerCarousel" class="carousel slide banner mb-5" data-bs-ride="carousel" data-bs-interval="2000">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <h1>Explore the World with Us</h1>
+      </div>
+      <div class="carousel-item">
+        <h1>Unforgettable Journeys Await</h1>
+      </div>
+      <div class="carousel-item">
+        <h1>Your Adventure Starts Here</h1>
+      </div>
+    </div>
+  </div>
+   <section class="section gallery mb-5">
+  <h2 class="text-center mb-4">Travel Moments</h2>
+  
+  <div id="travelCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="3000">
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src="{% static 'images/p1.jpg' %}" class="d-block w-100" alt="Mountain" style="height: 500px; object-fit: cover;">
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'images/p2.jpg' %}" class="d-block w-100" alt="Cityscape" style="height: 500px; object-fit: cover;">
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'images/p4.jpg' %}" class="d-block w-100" alt="Forest" style="height: 500px; object-fit: cover;">
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'images/p5.jpg' %}" class="d-block w-100" alt="Beach" style="height: 500px; object-fit: cover;">
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#travelCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+
+    <button class="carousel-control-next" type="button" data-bs-target="#travelCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+
+    <!-- Indicators -->
+    <div class="carousel-indicators">
+      <button type="button" data-bs-interval="3000" data-bs-target="#travelCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+      <button type="button" data-bs-interval="3000" data-bs-target="#travelCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+      <button type="button" data-bs-interval="3000" data-bs-target="#travelCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+      <button type="button" data-bs-interval="3000" data-bs-target="#travelCarousel" data-bs-slide-to="3" aria-label="Slide 4"></button>
+    </div>
+  </div>
+</section>
+  <!-- Tourist Places Image Section with Fade Transition -->
+  <section class="section tourist-places mb-5">
+    <h2 class="text-center mb-4">Discover Top Destinations</h2>
+    <div class="fade-gallery d-flex justify-content-center flex-wrap gap-3">
+      <img src="{% static 'images/p1.jpg' %}" class="fade-img" alt="Place 1">
+      <img src="{% static 'images/p2.jpg' %}" class="fade-img" alt="Place 2">
+      <img src="{% static 'images/p5.jpg' %}" class="fade-img" alt="Place 3">
+      <img src="{% static 'images/p4.jpg' %}" class="fade-img" alt="Place 4">
+    </div>
+  </section>
+
+  <!-- Banner Section with Carousel -->
+ 
+
+  <!-- Introduction & Achievements -->
+  <section class="section intro">
+    <h2>Welcome to Travel Planner</h2>
+    <p>We help you plan the perfect getaway with personalized travel packages and expert guidance. With over 10 years in the industry and thousands of happy travelers, we're your trusted partner in adventure.</p>
+    <ul>
+      <li>🏆 Over 50,000 trips planned</li>
+      <li>🌍 Serving clients in 40+ countries</li>
+      <li>⭐ Rated 4.9/5 by customers</li>
+    </ul>
+  </section>
+
+  <!-- Photo Gallery Section -->
+
+
+
+  <!-- Packages Section -->
+  <section class="section packages">
+  <h2 class="text-center mb-4">Popular Packages</h2>
+  
+  <div id="packageCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
+    <div class="carousel-inner">
+
+      {% for package in packages %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}">
+          <div class="container">
+            <div class="row justify-content-center">
+              <div class="col-lg-6 col-md-8">
+                <div class="card package-card h-100">
+                  <div class="position-relative">
+                    <img src="{{ package.pic.url }}" class="card-img-top" alt="{{ package.name }}" style="height: 200px; object-fit: cover;">
+                    <div class="price-badge">
+                      ₹{{ package.get_discounted_price|floatformat:0 }}
+                      {% if package.discount > 0 %}
+                        <small style="text-decoration: line-through; opacity: 0.8;">₹{{ package.base_price|floatformat:0 }}</small>
+                      {% endif %}
+                    </div>
+                  </div>
+                  <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ package.name }}</h5>
+                    <p class="card-text text-muted small">{{ package.description|truncatewords:15 }}</p>
+                    <div class="mb-3">
+                      <span class="badge bg-success">{{ package.duration_days }} Days</span>
+                      <span class="badge bg-info">{{ package.duration_nights }} Nights</span>
+                      <span class="badge bg-warning text-dark">{{ package.package_type }}</span>
+                    </div>
+                    <div class="mb-3">
+                      <small class="text-muted">Destinations:</small><br>
+                      {% for destination in package.destinations.all %}
+                        <span class="destination-chip">{{ destination.place.name }}</span>
+                      {% endfor %}
+                    </div>
+                    <div class="mt-auto">
+                      <div class="row">
+                        <div class="col-6">
+                          <a href="{% url 'tours:package_detail' package.id %}" class="btn btn-outline-primary btn-sm w-100">View Details</a>
+                        </div>
+                        <div class="col-6">
+                          <a href="{% url 'tours:package_booking' package.id %}" class="btn btn-primary btn-sm w-100">Book Now</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div> <!-- card-body -->
+                </div> <!-- card -->
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+
+    </div>
+
+    <!-- Carousel Controls -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#packageCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+      <span class="visually-hidden">Previous</span>
+    </button>
+
+    <button class="carousel-control-next" type="button" data-bs-target="#packageCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+      <span class="visually-hidden">Next</span>
+    </button>
+  </div>
+</section>
+
+</div>
+{% endblock %}

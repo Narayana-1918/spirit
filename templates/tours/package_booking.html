@@ -1,0 +1,146 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+<!-- Booking Form Section -->
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4>📋 Book Your Trip: {{ package.name }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'tours:package_booking' package.id %}">
+                        {% csrf_token %}
+                        
+                        <!-- Display form errors if any -->
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Please correct the following errors:</strong>
+                            <ul>
+                                {% for field, errors in form.errors.items %}
+                                    {% for error in errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.full_name.label_tag }}
+                                {{ form.full_name }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.phone.label_tag }}
+                                {{ form.phone }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.email.label_tag }}
+                                {{ form.email }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.travel_start_date.label_tag }}
+                                {{ form.travel_start_date }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                {{ form.adults.label_tag }}
+                                {{ form.adults }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ form.kids_5_12.label_tag }}
+                                {{ form.kids_5_12 }}
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                {{ form.kids_b_5.label_tag }}
+                                {{ form.kids_b_5 }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.address.label_tag }}
+                            {{ form.address }}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.special_requests.label_tag }}
+                                {{ form.special_requests }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.dietary_requirements.label_tag }}
+                                {{ form.dietary_requirements }}
+                            </div>
+                        </div>
+                        
+                        <!-- Price Summary -->
+                        <div class="card bg-light mb-3">
+                            <div class="card-body">
+                                <h6>💰 Price Summary</h6>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <small>Adults: <span id="adultCount">1</span> × ₹<span id="basePrice">{{ package.get_discounted_price|floatformat:2 }}</span></small><br>
+                                        <small>Kids (5-12): <span id="kid5Count">0</span> × ₹<span id="kid5Price">{{ package.get_discounted_price|multiply:0.7|floatformat:2 }}</span></small><br>
+                                        <small>Kids (Below 5): <span id="kidBCount">0</span> × ₹<span id="kidBPrice">{{ package.get_discounted_price|multiply:0.5|floatformat:2 }}</span></small>
+                                    </div>
+                                    <div class="col-6 text-end">
+                                        <h5 class="text-primary">Total: ₹<span id="totalAmount">{{ package.get_discounted_price|floatformat:2 }}</span></h5>
+                                        <small class="text-muted">For <span id="totalTravelers">1</span> travelers</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                🎯 Confirm Booking
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Live price calculation
+    function calculatePrice() {
+        const basePrice = {{ package.get_discounted_price }};
+        const adults = parseInt(document.querySelector('input[name="adults"]').value) || 0;
+        const kids512 = parseInt(document.querySelector('input[name="kids_5_12"]').value) || 0;
+        const kidsB5 = parseInt(document.querySelector('input[name="kids_b_5"]').value) || 0;
+        
+        // Calculate prices
+        const adultTotal = adults * basePrice;
+        const kid5Total = kids512 * (basePrice * 0.7);
+        const kidBTotal = kidsB5 * (basePrice * 0.5);
+        const totalAmount = adultTotal + kid5Total + kidBTotal;
+        const totalTravelers = adults + kids512 + kidsB5;
+        
+        // Update display
+        document.getElementById('adultCount').textContent = adults;
+        document.getElementById('kid5Count').textContent = kids512;
+        document.getElementById('kidBCount').textContent = kidsB5;
+        document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+        document.getElementById('totalTravelers').textContent = totalTravelers;
+    }
+
+    // Add event listeners for live calculation
+    document.addEventListener('DOMContentLoaded', function() {
+        const travelerInputs = document.querySelectorAll('input[name="adults"], input[name="kids_5_12"], input[name="kids_b_5"]');
+        travelerInputs.forEach(input => {
+            input.addEventListener('input', calculatePrice);
+        });
+        
+        // Initial calculation
+        calculatePrice();
+    });
+</script>
+{% endblock %}

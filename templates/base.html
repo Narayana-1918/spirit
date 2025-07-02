@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    {% block css %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+      body{
+        background: #78cce84a;
+      }
+    </style>
+{% endblock %}
+</head>
+<body>
+    {% include 'nav.html' %}
+
+    {% block content %}
+    
+    {% endblock %}
+    {% block footer %}
+    <!-- Font Awesome CDN for Social Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <footer style="background-color: #1e293b; color: #ffffff; padding: 2rem 1rem;">
+      <div style="max-width: 1200px; margin: 0 auto; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center;">
+        
+        <!-- Logo and Description -->
+    <div style="margin-bottom: 1rem;">
+      <h2 style="margin: 0;">🌍 Travel Explorer</h2>
+      <p style="margin: 0.5rem 0 0;">Discover. Explore. Experience.</p>
+    </div>
+
+    <!-- Navigation Links -->
+    <nav style="display: flex; flex-wrap: wrap; gap: 1rem;">
+      <a href="/home" style="color: #ffffff; text-decoration: none;">Home</a>
+      <a href="/destinations" style="color: #ffffff; text-decoration: none;">Destinations</a>
+      <a href="/tours" style="color: #ffffff; text-decoration: none;">Tours</a>
+      <a href="/bookings" style="color: #ffffff; text-decoration: none;">Bookings</a>
+      <a href="/about" style="color: #ffffff; text-decoration: none;">About Us</a>
+      <a href="/contact" style="color: #ffffff; text-decoration: none;">Contact</a>
+      <a href="/faq" style="color: #ffffff; text-decoration: none;">FAQ</a>
+      <a href="/profile" style="color: #ffffff; text-decoration: none;">My Profile</a>
+    </nav>
+
+    <!-- Social Media Links -->
+    <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+      <a href="https://facebook.com" target="_blank" style="color: #ffffff; font-size: 1.25rem;">
+        <i class="fab fa-facebook-f"></i>
+      </a>
+      <a href="https://twitter.com" target="_blank" style="color: #ffffff; font-size: 1.25rem;">
+        <i class="fab fa-twitter"></i>
+      </a>
+      <a href="https://instagram.com" target="_blank" style="color: #ffffff; font-size: 1.25rem;">
+        <i class="fab fa-instagram"></i>
+      </a>
+      <a href="https://linkedin.com" target="_blank" style="color: #ffffff; font-size: 1.25rem;">
+        <i class="fab fa-linkedin-in"></i>
+      </a>
+      <a href="https://youtube.com" target="_blank" style="color: #ffffff; font-size: 1.25rem;">
+        <i class="fab fa-youtube"></i>
+      </a>
+    </div>
+  </div>
+
+  <!-- Copyright -->
+  <div style="text-align: center; margin-top: 1.5rem; font-size: 0.875rem;">
+    &copy; 2025 Travel Explorer. All rights reserved.
+  </div>
+</footer>
+
+    {% endblock %}
+    
+</body>
+</html>

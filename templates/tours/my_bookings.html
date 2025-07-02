@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h2>My Bookings</h2>
+        </div>
+        <div class="col-md-6">
+            <form class="row g-2">
+                <div class="col-md-6">
+                    <input type="email" class="form-control" name="email" placeholder="Your email" 
+                           value="{{ request.GET.email }}">
+                </div>
+                <div class="col-md-4">
+                    <input type="tel" class="form-control" name="phone" placeholder="Your phone" 
+                           value="{{ request.GET.phone }}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if bookings %}
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Booking ID</th>
+                    <th>Package</th>
+                    <th>Travel Date</th>
+                    <th>Travelers</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.booking_id }}</td>
+                    <td>{{ booking.tour_package.name }}</td>
+                    <td>{{ booking.travel_start_date|date:"d M Y" }}</td>
+                    <td>
+                        {{ booking.adults }} Adult{% if booking.adults > 1 %}s{% endif %}
+                        {% if booking.kids_5_12 > 0 %}, {{ booking.kids_5_12 }} Child{% if booking.kids_5_12 > 1 %}ren{% endif %}{% endif %}
+                        {% if booking.kids_b_5 > 0 %}, {{ booking.kids_b_5 }} Infant{% if booking.kids_b_5 > 1 %}s{% endif %}{% endif %}
+                    </td>
+                    <td>₹{{ booking.total_amount|floatformat:2 }}</td>
+                    <td>
+                        <span class="badge 
+                            {% if booking.booking_status == 'Confirmed' %}bg-success
+                            {% elif booking.booking_status == 'Cancelled' %}bg-danger
+                            {% elif booking.booking_status == 'Completed' %}bg-secondary
+                            {% else %}bg-warning{% endif %}">
+                            {{ booking.booking_status }}
+                        </span>
+                    </td>
+                    <td>
+                        <a href="{% url 'tours:booking_detail' booking.booking_id %}" class="btn btn-sm btn-outline-primary">
+                            View
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        {% if request.GET.email or request.GET.phone %}
+        No bookings found matching your search criteria.
+        {% else %}
+        You haven't made any bookings yet. <a href="{% url 'tours:packages_list' %}">Browse our packages</a> to get started!
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

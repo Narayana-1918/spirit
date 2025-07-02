@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <img src="{{ place.place_img.url }}" class="card-img-top" alt="{{ place.name }}" style="height: 400px; object-fit: cover;">
+                <div class="card-body">
+                    <h1 class="card-title">{{ place.name }}</h1>
+                    <p class="text-muted h5">{{ place.state }}, {{ place.country }}</p>
+                    <hr>
+                    <div class="card-text">
+                        {{ place.description|linebreaks }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5>Popular Packages Including {{ place.name }}</h5>
+                </div>
+                <div class="card-body">
+                    {% if packages %}
+                    <div class="row">
+                        {% for package in packages %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card h-100">
+                                <img src="{{ package.pic.url }}" class="card-img-top" alt="{{ package.name }}" style="height: 150px; object-fit: cover;">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ package.name }}</h6>
+                                    <p class="small text-muted">
+                                        {{ package.duration_days }} Days • 
+                                        {{ package.duration_nights }} Nights • 
+                                        ₹{{ package.get_discounted_price|floatformat:2 }}
+                                    </p>
+                                </div>
+                                <div class="card-footer bg-transparent">
+                                    <a href="{% url 'tours:package_detail' package.id %}" class="btn btn-sm btn-outline-primary">
+                                        View Package
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="alert alert-info">
+                        No packages currently available for this destination.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h5>Quick Facts</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>State:</strong> {{ place.state|default:"Not specified" }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Country:</strong> {{ place.country }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Best Time to Visit:</strong> 
+                            {% if place.best_time_to_visit %}
+                                {{ place.best_time_to_visit }}
+                            {% else %}
+                                Year-round destination
+                            {% endif %}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Famous For:</strong> 
+                            {% if place.famous_for %}
+                                {{ place.famous_for }}
+                            {% else %}
+                                Scenic beauty and local culture
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5>Nearby Places</h5>
+                </div>
+                <div class="card-body">
+                    {% if nearby_places %}
+                    <div class="list-group">
+                        {% for nearby in nearby_places %}
+                        <a href="{% url 'place_detail' nearby.id %}" class="list-group-item list-group-item-action">
+                            {{ nearby.name }}, {{ nearby.state }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No nearby places information available.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

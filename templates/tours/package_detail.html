@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Package Hero Section -->
+            <div class="card mb-4">
+                <img src="{{ package.pic.url }}" class="card-img-top" alt="{{ package.name }}" style="height: 400px; object-fit: cover;">
+                <div class="card-img-overlay d-flex align-items-end">
+                    <div class="text-white">
+                        <h1 class="card-title">{{ package.name }}</h1>
+                        <p class="card-text">{{ package.duration_days }} Days • {{ package.duration_nights }} Nights • {{ package.package_type }} Package</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Package Description -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5>📝 About This Package</h5>
+                    <p>{{ package.description }}</p>
+                </div>
+            </div>
+
+            <!-- Destinations Covered -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5>🏞️ Destinations Covered</h5>
+                    <div class="row">
+                        {% for destination in destinations %}
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-0 bg-light">
+                                <div class="row g-0">
+                                    <div class="col-4">
+                                        <img src="{{ destination.dest_image.url }}" class="img-fluid rounded-start" alt="{{ destination.place.name }}" style="height: 100px; object-fit: cover;">
+                                    </div>
+                                    <div class="col-8">
+                                        <div class="card-body p-3">
+                                            <h6 class="card-title">{{ destination.place.name }}</h6>
+                                            <small class="text-muted">{{ destination.days_in_destination }} days • {{ destination.tour_type }}</small>
+                                            <p class="card-text small">{{ destination.description|truncatewords:10 }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Sidebar with pricing and booking -->
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h5 class="card-title">Package Pricing</h5>
+                    <p class="text-success h4">₹{{ package.get_discounted_price|floatformat:2 }} <small class="text-muted"><del>₹{{ package.base_price|floatformat:2 }}</del></small></p>
+                    <p class="text-success">{{ package.discount }}% OFF</p>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'tours:package_booking' package.id %}" class="btn btn-primary">Book Now</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Package Detail Modal (for quick view) -->
+<div class="modal fade" id="packageModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ package.name }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="{{ package.pic.url }}" class="img-fluid rounded" alt="{{ package.name }}">
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Package Highlights</h5>
+                        <p>{{ package.description|truncatewords:30 }}</p>
+                        <p><strong>Duration:</strong> {{ package.duration_days }} Days / {{ package.duration_nights }} Nights</p>
+                        <p><strong>Price:</strong> ₹{{ package.get_discounted_price|floatformat:2 }}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="{% url 'tours:package_booking' package.id %}" class="btn btn-primary">Book Now</a>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

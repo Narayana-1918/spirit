@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Package Detail Page Template -->
+    <div id="packageDetailTemplate" style="display: none;">
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-lg-8">
+                    <!-- Package Hero Section -->
+                    <div class="card mb-4">
+                        <img src="{{ package.pic.url }}" class="card-img-top" alt="{{ package.name }}" style="height: 400px; object-fit: cover;">
+                        <div class="card-img-overlay d-flex align-items-end">
+                            <div class="text-white">
+                                <h1 class="card-title">{{ package.name }}</h1>
+                                <p class="card-text">{{ package.duration_days }} Days • {{ package.duration_nights }} Nights • {{ package.package_type }} Package</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Package Description -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5>📝 About This Package</h5>
+                            <p>{{ package.description }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Destinations Covered -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5>🏞️ Destinations Covered</h5>
+                            <div class="row">
+                                {% for destination in destinations %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card border-0 bg-light">
+                                        <div class="row g-0">
+                                            <div class="col-4">
+                                                <img src="{{ destination.dest_image.url }}" class="img-fluid rounded-start" alt="{{ destination.place.name }}" style="height: 100px; object-fit: cover;">
+                                            </div>
+                                            <div class="col-8">
+                                                <div class="card-body p-3">
+                                                    <h6 class="card-title">{{ destination.place.name }}</h6>
+                                                    <small class="text-muted">{{ destination.days_in_destination }} days • {{ destination.tour_type }}</small>
+                                                    <p class="card-text small">{{ destination.description|truncatewords:10 }}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Itinerary -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h5>🗓️ Day-wise Itinerary</h5>
+                            <div class="accordion" id="itineraryAccordion">
+                                {% for day in package_itinerary %}
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button {% if not forloop.first %}collapsed{% endif %}" 
+                                                type="button" data-bs-toggle="collapse" 
+                                                data-bs-target="#day{{ day.day_number }}">
+                                            Day {{ day.day_number }}: {{ day.day_title }}
+                                            <span class="badge bg-primary ms-2">{{ day.current_destination.place.name }}</span>
+                                        </button>
+                                    </h2>
+                                    <div id="day{{ day.day_number }}" 
+                                         class="accordion-collapse collapse {% if forloop.first %}show{% endif %}">
+                                        <div class="accordion-body">
+                                            <p>{{ day.description }}</p>
+                                            {% if day.activities %}
+                                                <h6>🎯 Activities:</h6>
+                                                <p>{{ day.activities }}</p>
+                                            {% endif %}
+                                            {% if day.meals_included %}
+                                                <h6>🍽️ Meals Included:</h6>
+                                                <p>{{ day.meals_included }}</p>
+                                            {% endif %}
+                                            {% if day.accommodation_details %}
+                                                <h6>🏨 Accommodation:</h6>
+                                                <p>{{ day.accommodation_details }}</p>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Sidebar -->
+                <div class="col-lg-4">
+                    <div class="card sticky-top">
+                        <div class="card-body">
+                            <h5>💰 Package Pricing</h5>
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <span>Starting from</span>
+                                <div>
+                                    {% if package.discount > 0 %}
+                                        <span class="text-decoration-line-through text-muted">₹{{ package.base_price|floatformat:0 }}</span>
+                                        <span class="h4 text-success ms-2">₹{{ package.get_discounted_price|floatformat:0 }}</span>
+                                    {% else %}
+                                        <span class="h4 text-primary">₹{{ package.base_price|floatformat:0 }}</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <small class="text-muted">Per person pricing examples:</small>
+                                <ul class="list-unstyled small">
+                                    <li>👤 Single: ₹{{ pricing_examples.single|floatformat:0 }}</li>
+                                    <li>👫 Couple: ₹{{ pricing_examples.couple|floatformat:0 }}</li>
+                                    <li>👨‍👩‍👧‍👦 Family of 4: ₹{{ pricing_examples.family_4|floatformat:0 }}</li>
+                                </ul>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary btn-lg" onclick="showBookingForm({{package.id}})">
+                                    🎯 Book Now
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="window.location.href='tel:+911234567890'">
+                                    📞 Call for Details
+                                </button>
+                            </div>
+
+                            <hr>
+                            <h6>📋 Package Highlights</h6>
+                            <ul class="list-unstyled small">
+                                <li>✅ {{ package.duration_days }} Days / {{ package.duration_nights }} Nights</li>
+                                <li>✅ {{ destinations.count }} Destination{{ destinations.count|pluralize }}</li>
+                                <li>✅ All transfers included</li>
+                                <li>✅ Professional tour guide</li>
+                                <li>✅ 24/7 customer support</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h2>Explore Our Destinations</h2>
+        </div>
+        <div class="col-md-6">
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" name="search" placeholder="Search places..." 
+                       value="{{ request.GET.search }}">
+                <button class="btn btn-outline-primary" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
+
+    {% if state_filter %}
+    <div class="alert alert-info">
+        Showing results for: <strong>{{ state_filter }}</strong>
+        <a href="{% url 'tours:places_list' %}" class="float-end">Clear filter</a>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        {% for place in page_obj %}
+        <div class="col-lg-4 col-md-6 mb-4">
+            <div class="card h-100">
+                <img src="{{ place.place_img.url }}" class="card-img-top" alt="{{ place.name }}" style="height: 200px; object-fit: cover;">
+                <div class="card-body">
+                    <h5 class="card-title">{{ place.name }}</h5>
+                    <p class="text-muted">{{ place.state }}, {{ place.country }}</p>
+                    <p class="card-text">{{ place.description|truncatewords:20 }}</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{% url 'tours:place_detail' place.id %}" class="btn btn-sm btn-outline-primary">View Details</a>
+                    {% if place.state %}
+                    <a href="{% url 'tours:places_list' %}?state={{ place.state }}" class="btn btn-sm btn-outline-secondary float-end">
+                        More in {{ place.state }}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-warning">No places found matching your criteria.</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if page_obj.paginator.num_pages > 1 %}
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.state %}&state={{ request.GET.state }}{% endif %}">First</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.state %}&state={{ request.GET.state }}{% endif %}">Previous</a>
+            </li>
+            {% endif %}
+
+            <li class="page-item active">
+                <span class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            </li>
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.state %}&state={{ request.GET.state }}{% endif %}">Next</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.search %}&search={{ request.GET.search }}{% endif %}{% if request.GET.state %}&state={{ request.GET.state }}{% endif %}">Last</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}
