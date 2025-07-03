@@ -34,7 +34,10 @@ SECRET_KEY = 'django-insecure-sqtu0%(#djb1e@gfef*gn$nr1v+&1u!7ybi&^7kh4yvv4m=b_9
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*',"https://spirit-8zie.onrender.com"]
+CSRF_TRUSTED_ORIGINS=["https://spirit-8zie.onrender.com"]
+
+INTERNAL_IPS=('127.0.0.1','localhost:8000')
 
 
 # Application definition
@@ -88,9 +91,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'spirit.wsgi.application'
 
-# CSRF_TRUSTED_ORIGINS=["https://deploy-d1.onrender.com"]
-
-INTERNAL_IPS=('127.0.0.1','localhost:8000')
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
