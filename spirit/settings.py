@@ -16,6 +16,15 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_ROOT=os.path.join(BASE_DIR/'media')
 
+from environ import Env
+env=Env()
+Env.read_env()
+ENVIRONMENT=env('ENVIRONMENT')
+if ENVIRONMENT=='development':
+    DEBUG=True
+else:
+    DEBUG=False
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -23,9 +32,9 @@ MEDIA_ROOT=os.path.join(BASE_DIR/'media')
 SECRET_KEY = 'django-insecure-sqtu0%(#djb1e@gfef*gn$nr1v+&1u!7ybi&^7kh4yvv4m=b_9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -38,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage','cloudinary',
     'booking',
 ]
 
@@ -49,6 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
 ROOT_URLCONF = 'spirit.urls'
@@ -77,16 +88,26 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'spirit.wsgi.application'
 
+# CSRF_TRUSTED_ORIGINS=["https://deploy-d1.onrender.com"]
+
+INTERNAL_IPS=('127.0.0.1','localhost:8000')
 
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+if ENVIRONMENT=='development':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
     }
-}
+else:
+    import dj_database_url
+    DATABASES = {
+        'default':dj_database_url.config(
+        default=os.getenv('DATABASE_URL'))
+    }
 
 
 # Password validation
@@ -124,7 +145,17 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT=BASE_DIR/'staticfiles'
 MEDIA_URL='media/'
+
+DEFAULT_FILE_STORAGE='cloudinary_storage.storage.MediaCloudinaryStorage'
+
+CLOUDINARY_STORAGE={
+    'CLOUD_NAME':os.environ.get('CLOUDINARY_CLOUD_NAME'),
+    'API_KEY':os.environ.get('CLOUDINARY_API_KEY'),
+    'API_SECRET':os.environ.get('CLOUDINARY_API_SECRET'),
+}
+
 STATICFILES_DIRS=[BASE_DIR/'static']
 
 # Default primary key field type

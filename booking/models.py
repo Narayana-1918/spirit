@@ -154,7 +154,7 @@ class Booking(models.Model):
             package_code = ''.join([word[:2].upper() for word in self.tour_package.name.split()[:2]])
             
             # Get destination codes
-            destinations = self.tour_package.destination.all().order_by('destination_order')
+            destinations = self.tour_package.destination.all().order_by('destination_order') # type: ignore
             dest_codes = ''.join([dest.place.name[:2].upper() for dest in destinations[:3]])  # Max 3 destinations in code
             
             # Get tour type from first destination
