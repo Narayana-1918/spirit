@@ -20,10 +20,10 @@ from environ import Env
 env=Env()
 Env.read_env()
 ENVIRONMENT=env('ENVIRONMENT')
-if ENVIRONMENT=='development':
-    DEBUG=True
-else:
-    DEBUG=False
+# if ENVIRONMENT=='development':
+DEBUG=True
+# else:
+#     DEBUG=False
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
